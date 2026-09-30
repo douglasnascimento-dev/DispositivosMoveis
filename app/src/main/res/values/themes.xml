@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.DespensaAlerta" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/deep_juniper</item>
+        <item name="colorOnPrimary">@color/cream_linen</item>
+        <item name="colorPrimaryContainer">@color/mint_sorbet</item>
+        <item name="colorOnPrimaryContainer">@color/juniper_escuro</item>
+        <item name="colorSecondary">@color/caramel_clay</item>
+        <item name="colorOnSecondary">@color/cream_linen</item>
+        <item name="colorSecondaryContainer">@color/mint_sorbet</item>
+        <item name="colorOnSecondaryContainer">@color/juniper_escuro</item>
+        <item name="colorTertiary">@color/caramel_clay</item>
+        <item name="colorTertiaryContainer">@color/caramel_suave</item>
+        <item name="colorOnTertiaryContainer">@color/caramel_escuro</item>
+
+        <item name="android:colorBackground">@color/cream_linen</item>
+        <item name="colorOnBackground">@color/texto_principal</item>
+        <item name="colorSurface">@color/linen_claro</item>
+        <item name="colorOnSurface">@color/texto_principal</item>
+        <item name="colorOnSurfaceVariant">@color/texto_secundario</item>
+        <item name="colorSurfaceContainerLowest">@color/linen_claro</item>
+        <item name="colorSurfaceContainerLow">@color/linen_claro</item>
+        <item name="colorSurfaceContainer">@color/linen_container</item>
+        <item name="colorSurfaceContainerHigh">@color/linen_container</item>
+        <item name="colorSurfaceContainerHighest">@color/linen_container</item>
+        <item name="colorOutline">@color/texto_secundario</item>
+        <item name="colorOutlineVariant">@color/linen_borda</item>
+
+        <item name="shapeAppearanceCornerSmall">@style/ShapeAppearance.DespensaAlerta.Pequena</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.DespensaAlerta.Media</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.DespensaAlerta.Grande</item>
+
+        <item name="toolbarStyle">@style/Widget.DespensaAlerta.Toolbar</item>
+        <item name="materialCardViewStyle">@style/Widget.DespensaAlerta.Card</item>
+        <item name="bottomNavigationStyle">@style/Widget.DespensaAlerta.BottomNavigation</item>
+        <item name="extendedFloatingActionButtonStyle">@style/Widget.DespensaAlerta.ExtendedFab</item>
+
+        <item name="android:statusBarColor">@color/cream_linen</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/linen_container</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <style name="Theme.DespensaAlerta" parent="Base.Theme.DespensaAlerta" />
+
+    <style name="ShapeAppearance.DespensaAlerta.Pequena" parent="ShapeAppearance.Material3.Corner.Small">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.DespensaAlerta.Media" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.DespensaAlerta.Grande" parent="ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/cream_linen</item>
+        <item name="titleTextColor">@color/deep_juniper</item>
+        <item name="titleTextAppearance">@style/TextAppearance.DespensaAlerta.TituloBarra</item>
+        <item name="navigationIconTint">@color/deep_juniper</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/linen_claro</item>
+        <item name="strokeColor">@color/linen_borda</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.DespensaAlerta.Media</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/linen_container</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.DespensaAlerta.IndicadorAtivo</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.IndicadorAtivo" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/mint_sorbet</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.ExtendedFab" parent="Widget.Material3.ExtendedFloatingActionButton.Icon.Primary">
+        <item name="backgroundTint">@color/caramel_clay</item>
+        <item name="android:textColor">@color/cream_linen</item>
+        <item name="iconTint">@color/cream_linen</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.Chip.Status" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_status_fundo</item>
+        <item name="chipStrokeColor">@color/chip_status_borda</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">100dp</item>
+        <item name="chipMinHeight">36dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textColor">@color/chip_status_texto</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.Chip.Categoria" parent="Widget.DespensaAlerta.Chip.Status">
+        <item name="chipBackgroundColor">@color/chip_categoria_fundo</item>
+        <item name="chipStrokeColor">@color/chip_categoria_borda</item>
+        <item name="android:textColor">@color/chip_categoria_texto</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
+        <item name="chipMinHeight">32dp</item>
+    </style>
+
+    <style name="Widget.DespensaAlerta.EstadoVazio" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">24dp</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="drawableTopCompat">@drawable/ic_folha</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">@color/texto_secundario</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="TextAppearance.DespensaAlerta.TituloBarra" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.DespensaAlerta.Selo" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.DespensaAlerta.Rotulo" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/texto_secundario</item>
+    </style>
+</resources>

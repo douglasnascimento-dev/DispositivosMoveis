@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mint_sorbet">#B8D8C4</color>
+    <color name="caramel_clay">#A86F46</color>
+    <color name="deep_juniper">#355B56</color>
+    <color name="cream_linen">#F3EBDD</color>
+
+    <color name="mint_suave">#DCEBE0</color>
+    <color name="juniper_escuro">#1F3A36</color>
+    <color name="caramel_suave">#EBD7C4</color>
+    <color name="caramel_escuro">#5A3620</color>
+    <color name="linen_claro">#FBF7F0</color>
+    <color name="linen_container">#EDE3D1</color>
+    <color name="linen_borda">#E2D6C2</color>
+    <color name="texto_principal">#26322F</color>
+    <color name="texto_secundario">#5E6B66</color>
+
+    <color name="status_vencido">#9E3F32</color>
+    <color name="status_vencido_fundo">#F2DCD5</color>
+    <color name="status_vencendo">#8A5632</color>
+    <color name="status_vencendo_fundo">#F1E0CF</color>
+    <color name="status_ok">#355B56</color>
+    <color name="status_ok_fundo">#DCEBE0</color>
+
+    <color name="situacao_consumido">#3E5F6B</color>
+    <color name="situacao_consumido_fundo">#DAE6EA</color>
+    <color name="situacao_descartado">#6F5A48</color>
+    <color name="situacao_descartado_fundo">#E9E0D6</color>
+</resources>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Despensa Alerta</string>
+
+    <string name="titulo_painel">Painel</string>
+    <string name="titulo_itens">Meus itens</string>
+    <string name="titulo_historico">Histórico</string>
+    <string name="titulo_novo_item">Novo item</string>
+    <string name="titulo_editar_item">Editar item</string>
+    <string name="titulo_detalhe_item">Detalhes do item</string>
+
+    <string name="nav_painel">Painel</string>
+    <string name="nav_itens">Itens</string>
+    <string name="nav_historico">Histórico</string>
+
+    <string name="status_vencido">Vencido</string>
+    <string name="status_vencendo">Vencendo</string>
+    <string name="status_dentro_validade">Na validade</string>
+    <string name="situacao_ativo">Disponível</string>
+    <string name="situacao_consumido">Consumido</string>
+    <string name="situacao_descartado">Descartado</string>
+
+    <string name="painel_saudacao">Sua despensa hoje</string>
+    <plurals name="painel_total_itens">
+        <item quantity="one">%d item disponível</item>
+        <item quantity="other">%d itens disponíveis</item>
+    </plurals>
+    <string name="painel_ver_itens">Ver itens ›</string>
+    <string name="painel_vencidos">Vencidos</string>
+    <string name="painel_vencendo">Próximos 7 dias</string>
+    <string name="painel_ok">Na validade</string>
+    <string name="painel_atencao">Precisam de atenção</string>
+    <string name="painel_vazio">Nenhum item vencido ou vencendo. Tudo em dia!</string>
+
+    <string name="busca_hint">Buscar por nome</string>
+    <string name="filtro_categoria">Categoria</string>
+    <string name="filtro_status">Status</string>
+    <string name="filtro_todos">Todos</string>
+    <string name="acao_limpar_busca">Limpar busca</string>
+    <string name="filtro_todas_categorias">Todas as categorias</string>
+    <string name="itens_vazio">Nenhum item encontrado.</string>
+    <string name="acao_novo_item">Novo item</string>
+
+    <string name="historico_vazio">Nenhum item consumido ou descartado ainda.</string>
+
+    <string name="campo_nome">Nome do produto</string>
+    <string name="campo_categoria">Categoria</string>
+    <string name="campo_quantidade">Quantidade</string>
+    <string name="campo_local">Local de armazenamento</string>
+    <string name="campo_validade">Data de validade</string>
+    <string name="acao_salvar">Salvar</string>
+    <string name="erro_campo_obrigatorio">Campo obrigatório</string>
+    <string name="erro_quantidade">Informe uma quantidade maior que zero</string>
+
+    <string name="rotulo_categoria">Categoria</string>
+    <string name="rotulo_quantidade">Quantidade</string>
+    <string name="rotulo_local">Local</string>
+    <string name="rotulo_validade">Validade</string>
+    <string name="acao_editar">Editar</string>
+    <string name="acao_consumido">Consumido</string>
+    <string name="acao_descartado">Descartado</string>
+    <string name="acao_excluir">Excluir</string>
+    <string name="acao_cancelar">Cancelar</string>
+    <string name="dialogo_excluir_titulo">Excluir item?</string>
+    <string name="dialogo_excluir_mensagem">O item será removido permanentemente.</string>
+
+    <string name="msg_item_cadastrado">Item cadastrado</string>
+    <string name="msg_item_atualizado">Item atualizado</string>
+    <string name="msg_item_excluido">Item excluído</string>
+    <string name="msg_item_consumido">Item marcado como consumido</string>
+    <string name="msg_item_descartado">Item marcado como descartado</string>
+
+    <string name="formato_detalhes">%1$s • %2$s • Qtd: %3$d</string>
+    <string name="formato_validade_prazo">Validade: %1$s · %2$s</string>
+    <string name="formato_data_baixa">Baixa em %1$s</string>
+    <string name="formato_baixa_detalhe">%1$s em %2$s</string>
+    <string name="vence_hoje">Vence hoje</string>
+    <plurals name="vence_em_dias">
+        <item quantity="one">Vence em %d dia</item>
+        <item quantity="other">Vence em %d dias</item>
+    </plurals>
+    <plurals name="venceu_ha_dias">
+        <item quantity="one">Venceu há %d dia</item>
+        <item quantity="other">Venceu há %d dias</item>
+    </plurals>
+</resources>

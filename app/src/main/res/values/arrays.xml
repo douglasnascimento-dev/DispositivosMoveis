@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categorias">
+        <item>Laticínios</item>
+        <item>Carnes</item>
+        <item>Grãos</item>
+        <item>Padaria</item>
+        <item>Frutas e verduras</item>
+        <item>Bebidas</item>
+        <item>Enlatados</item>
+        <item>Limpeza</item>
+        <item>Higiene</item>
+        <item>Outros</item>
+    </string-array>
+
+    <string-array name="categorias_filtro">
+        <item>@string/filtro_todas_categorias</item>
+        <item>Laticínios</item>
+        <item>Carnes</item>
+        <item>Grãos</item>
+        <item>Padaria</item>
+        <item>Frutas e verduras</item>
+        <item>Bebidas</item>
+        <item>Enlatados</item>
+        <item>Limpeza</item>
+        <item>Higiene</item>
+        <item>Outros</item>
+    </string-array>
+
+    <string-array name="locais">
+        <item>Armário</item>
+        <item>Geladeira</item>
+        <item>Freezer</item>
+        <item>Área de serviço</item>
+        <item>Banheiro</item>
+        <item>Outro</item>
+    </string-array>
+</resources>
