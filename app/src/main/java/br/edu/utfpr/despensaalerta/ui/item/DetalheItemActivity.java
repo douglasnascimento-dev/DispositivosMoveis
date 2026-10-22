@@ -76,12 +76,16 @@ public class DetalheItemActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Item item = ItemRepository.getInstance().buscarPorId(itemId);
-        if (item == null) {
-            finish();
-            return;
-        }
-        exibir(item);
+        ItemRepository.getInstance(this).buscarPorId(itemId, item -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            if (item == null) {
+                finish();
+                return;
+            }
+            exibir(item);
+        });
     }
 
     @Override
@@ -123,10 +127,12 @@ public class DetalheItemActivity extends AppCompatActivity {
     }
 
     private void registrarBaixa(SituacaoItem situacao, int mensagemRes) {
-        if (ItemRepository.getInstance().registrarBaixa(itemId, situacao)) {
-            Toast.makeText(this, mensagemRes, Toast.LENGTH_SHORT).show();
-        }
-        finish();
+        ItemRepository.getInstance(this).registrarBaixa(itemId, situacao, sucesso -> {
+            if (sucesso) {
+                Toast.makeText(getApplicationContext(), mensagemRes, Toast.LENGTH_SHORT).show();
+            }
+            finish();
+        });
     }
 
     private void confirmarExclusao() {
@@ -135,9 +141,11 @@ public class DetalheItemActivity extends AppCompatActivity {
                 .setMessage(R.string.dialogo_excluir_mensagem)
                 .setNegativeButton(R.string.acao_cancelar, null)
                 .setPositiveButton(R.string.acao_excluir, (dialog, which) -> {
-                    ItemRepository.getInstance().excluir(itemId);
-                    Toast.makeText(this, R.string.msg_item_excluido, Toast.LENGTH_SHORT).show();
-                    finish();
+                    ItemRepository.getInstance(this).excluir(itemId, sucesso -> {
+                        Toast.makeText(getApplicationContext(), R.string.msg_item_excluido,
+                                Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
                 })
                 .show();
     }

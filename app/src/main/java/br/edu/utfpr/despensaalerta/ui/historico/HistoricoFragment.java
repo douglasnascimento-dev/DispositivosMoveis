@@ -43,8 +43,12 @@ public class HistoricoFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        List<Item> historico = ItemRepository.getInstance().listarHistorico();
-        adapter.submeter(historico);
-        textVazio.setVisibility(historico.isEmpty() ? View.VISIBLE : View.GONE);
+        ItemRepository.getInstance(requireContext()).listarHistorico(historico -> {
+            if (getView() == null) {
+                return;
+            }
+            adapter.submeter(historico);
+            textVazio.setVisibility(historico.isEmpty() ? View.VISIBLE : View.GONE);
+        });
     }
 }

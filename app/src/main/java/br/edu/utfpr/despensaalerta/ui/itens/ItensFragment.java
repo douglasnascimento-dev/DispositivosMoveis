@@ -33,11 +33,13 @@ public class ItensFragment extends Fragment {
 
     private static final String ARG_STATUS = "status";
     private static final String ESTADO_CATEGORIA = "categoria";
+    private static final String ESTADO_LOCAL = "local";
 
     private EditText campoBusca;
     private View botaoLimparBusca;
     private ChipGroup chipsStatus;
     private ChipGroup chipsCategoria;
+    private ChipGroup chipsLocal;
     private TextView textVazio;
     private ItemAdapter adapter;
 
@@ -64,6 +66,7 @@ public class ItensFragment extends Fragment {
         botaoLimparBusca = view.findViewById(R.id.botao_limpar_busca);
         chipsStatus = view.findViewById(R.id.chips_status);
         chipsCategoria = view.findViewById(R.id.chips_categoria);
+        chipsLocal = view.findViewById(R.id.chips_local);
         textVazio = view.findViewById(R.id.text_vazio);
 
         adapter = new ItemAdapter(false, item ->
@@ -71,14 +74,17 @@ public class ItensFragment extends Fragment {
         RecyclerView lista = view.findViewById(R.id.recycler_itens);
         lista.setAdapter(adapter);
 
-        criarChipsCategoria(savedInstanceState == null
+        criarChips(chipsCategoria, R.array.categorias_filtro, savedInstanceState == null
                 ? 0 : savedInstanceState.getInt(ESTADO_CATEGORIA, 0));
+        criarChips(chipsLocal, R.array.locais_filtro, savedInstanceState == null
+                ? 0 : savedInstanceState.getInt(ESTADO_LOCAL, 0));
         if (savedInstanceState == null) {
             chipsStatus.check(idDoChip(statusInicial()));
         }
 
         chipsStatus.setOnCheckedStateChangeListener((group, checkedIds) -> atualizar());
         chipsCategoria.setOnCheckedStateChangeListener((group, checkedIds) -> atualizar());
+        chipsLocal.setOnCheckedStateChangeListener((group, checkedIds) -> atualizar());
         configurarBusca();
     }
 
@@ -92,8 +98,8 @@ public class ItensFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (chipsCategoria != null) {
-            outState.putInt(ESTADO_CATEGORIA,
-                    chipsCategoria.indexOfChild(chipsCategoria.findViewById(chipsCategoria.getCheckedChipId())));
+            outState.putInt(ESTADO_CATEGORIA, indiceSelecionado(chipsCategoria));
+            outState.putInt(ESTADO_LOCAL, indiceSelecionado(chipsLocal));
         }
     }
 
@@ -123,20 +129,24 @@ public class ItensFragment extends Fragment {
         botaoLimparBusca.setOnClickListener(v -> campoBusca.setText(""));
     }
 
-    private void criarChipsCategoria(int indiceSelecionado) {
+    private static int indiceSelecionado(ChipGroup grupo) {
+        return grupo.indexOfChild(grupo.findViewById(grupo.getCheckedChipId()));
+    }
+
+    private void criarChips(ChipGroup grupo, int arrayRes, int indiceSelecionado) {
         LayoutInflater inflater = LayoutInflater.from(requireContext());
-        String[] categorias = getResources().getStringArray(R.array.categorias_filtro);
-        for (int i = 0; i < categorias.length; i++) {
-            Chip chip = (Chip) inflater.inflate(R.layout.chip_categoria, chipsCategoria, false);
+        String[] opcoes = getResources().getStringArray(arrayRes);
+        for (int i = 0; i < opcoes.length; i++) {
+            Chip chip = (Chip) inflater.inflate(R.layout.chip_categoria, grupo, false);
             chip.setId(View.generateViewId());
-            chip.setText(categorias[i]);
-            chip.setTag(i == 0 ? null : categorias[i]);
+            chip.setText(opcoes[i]);
+            chip.setTag(i == 0 ? null : opcoes[i]);
             chip.setSaveEnabled(false);
-            chipsCategoria.addView(chip);
+            grupo.addView(chip);
         }
-        int indice = indiceSelecionado >= 0 && indiceSelecionado < categorias.length
+        int indice = indiceSelecionado >= 0 && indiceSelecionado < opcoes.length
                 ? indiceSelecionado : 0;
-        chipsCategoria.check(chipsCategoria.getChildAt(indice).getId());
+        grupo.check(grupo.getChildAt(indice).getId());
     }
 
     @Nullable
@@ -178,17 +188,22 @@ public class ItensFragment extends Fragment {
     }
 
     @Nullable
-    private String categoriaSelecionada() {
-        View chip = chipsCategoria.findViewById(chipsCategoria.getCheckedChipId());
+    private static String valorSelecionado(ChipGroup grupo) {
+        View chip = grupo.findViewById(grupo.getCheckedChipId());
         return chip == null ? null : (String) chip.getTag();
     }
 
     private void atualizar() {
         String texto = campoBusca.getText().toString();
-        List<Item> itens = ItemRepository.getInstance()
-                .buscar(texto, categoriaSelecionada(), statusSelecionado());
-        adapter.submeter(itens);
-        textVazio.setVisibility(itens.isEmpty() ? View.VISIBLE : View.GONE);
+        ItemRepository.getInstance(requireContext())
+                .buscar(texto, valorSelecionado(chipsCategoria), valorSelecionado(chipsLocal),
+                        statusSelecionado(), itens -> {
+                    if (getView() == null || !texto.equals(campoBusca.getText().toString())) {
+                        return;
+                    }
+                    adapter.submeter(itens);
+                    textVazio.setVisibility(itens.isEmpty() ? View.VISIBLE : View.GONE);
+                });
     }
 
     private void esconderTeclado() {

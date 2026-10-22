@@ -38,6 +38,7 @@
     <string name="filtro_todos">Todos</string>
     <string name="acao_limpar_busca">Limpar busca</string>
     <string name="filtro_todas_categorias">Todas as categorias</string>
+    <string name="filtro_todos_locais">Todos os locais</string>
     <string name="itens_vazio">Nenhum item encontrado.</string>
     <string name="acao_novo_item">Novo item</string>
 

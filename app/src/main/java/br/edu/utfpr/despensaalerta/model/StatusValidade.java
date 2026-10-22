@@ -34,6 +34,28 @@ public enum StatusValidade {
         return fundoRes;
     }
 
+    public long inicioFaixa(LocalDate hoje) {
+        switch (this) {
+            case VENCIDO:
+                return Long.MIN_VALUE;
+            case VENCENDO:
+                return hoje.toEpochDay();
+            default:
+                return hoje.plusDays(DIAS_ALERTA + 1).toEpochDay();
+        }
+    }
+
+    public long fimFaixa(LocalDate hoje) {
+        switch (this) {
+            case VENCIDO:
+                return hoje.minusDays(1).toEpochDay();
+            case VENCENDO:
+                return hoje.plusDays(DIAS_ALERTA).toEpochDay();
+            default:
+                return Long.MAX_VALUE;
+        }
+    }
+
     public static StatusValidade calcular(LocalDate validade, LocalDate hoje) {
         if (validade.isBefore(hoje)) {
             return VENCIDO;

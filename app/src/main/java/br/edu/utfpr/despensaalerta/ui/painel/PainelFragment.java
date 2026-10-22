@@ -70,17 +70,32 @@ public class PainelFragment extends Fragment {
     }
 
     private void atualizar() {
-        ItemRepository repositorio = ItemRepository.getInstance();
-        List<Item> vencidos = repositorio.listarPorStatus(StatusValidade.VENCIDO);
-        List<Item> vencendo = repositorio.listarPorStatus(StatusValidade.VENCENDO);
+        ItemRepository.getInstance(requireContext()).listarAtivos(this::exibir);
+    }
 
-        int totalItens = repositorio.listarAtivos().size();
+    private void exibir(List<Item> ativos) {
+        if (getView() == null) {
+            return;
+        }
+        List<Item> vencidos = new ArrayList<>();
+        List<Item> vencendo = new ArrayList<>();
+        int naValidade = 0;
+        for (Item item : ativos) {
+            StatusValidade status = item.getStatus();
+            if (status == StatusValidade.VENCIDO) {
+                vencidos.add(item);
+            } else if (status == StatusValidade.VENCENDO) {
+                vencendo.add(item);
+            } else {
+                naValidade++;
+            }
+        }
+
         textTotalItens.setText(getResources().getQuantityString(
-                R.plurals.painel_total_itens, totalItens, totalItens));
+                R.plurals.painel_total_itens, ativos.size(), ativos.size()));
         textTotalVencidos.setText(String.valueOf(vencidos.size()));
         textTotalVencendo.setText(String.valueOf(vencendo.size()));
-        textTotalOk.setText(String.valueOf(
-                repositorio.contarPorStatus(StatusValidade.DENTRO_DA_VALIDADE)));
+        textTotalOk.setText(String.valueOf(naValidade));
 
         List<Item> atencao = new ArrayList<>(vencidos);
         atencao.addAll(vencendo);

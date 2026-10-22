@@ -35,4 +35,14 @@
         <item>Banheiro</item>
         <item>Outro</item>
     </string-array>
+
+    <string-array name="locais_filtro">
+        <item>@string/filtro_todos_locais</item>
+        <item>Armário</item>
+        <item>Geladeira</item>
+        <item>Freezer</item>
+        <item>Área de serviço</item>
+        <item>Banheiro</item>
+        <item>Outro</item>
+    </string-array>
 </resources>

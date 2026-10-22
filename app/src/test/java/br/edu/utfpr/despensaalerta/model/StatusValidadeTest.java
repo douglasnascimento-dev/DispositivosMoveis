@@ -26,4 +26,16 @@ public class StatusValidadeTest {
         assertEquals(StatusValidade.DENTRO_DA_VALIDADE,
                 StatusValidade.calcular(hoje.plusDays(8), hoje));
     }
+
+    @Test
+    public void faixasDeDatasBatemComCalcular() {
+        for (int dias = -30; dias <= 30; dias++) {
+            LocalDate validade = hoje.plusDays(dias);
+            long epoch = validade.toEpochDay();
+            for (StatusValidade status : StatusValidade.values()) {
+                boolean naFaixa = epoch >= status.inicioFaixa(hoje) && epoch <= status.fimFaixa(hoje);
+                assertEquals(StatusValidade.calcular(validade, hoje) == status, naFaixa);
+            }
+        }
+    }
 }

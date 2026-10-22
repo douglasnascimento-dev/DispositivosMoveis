@@ -1,9 +1,15 @@
 package br.edu.utfpr.despensaalerta.model;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.time.LocalDate;
 
+@Entity(tableName = "itens")
 public class Item {
 
+    @PrimaryKey(autoGenerate = true)
     private long id;
     private String nome;
     private String categoria;
@@ -16,6 +22,7 @@ public class Item {
     public Item() {
     }
 
+    @Ignore
     public Item(String nome, String categoria, int quantidade, String local, LocalDate dataValidade) {
         this.nome = nome;
         this.categoria = categoria;

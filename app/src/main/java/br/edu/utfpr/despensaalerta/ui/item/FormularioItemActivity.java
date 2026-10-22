@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,7 @@ public class FormularioItemActivity extends AppCompatActivity {
     private static final String TAG_SELETOR_DATA = "seletor_validade";
 
     private Item itemEmEdicao;
+    private View botaoSalvar;
     private LocalDate dataValidade;
 
     private TextInputLayout layoutNome;
@@ -72,22 +74,11 @@ public class FormularioItemActivity extends AppCompatActivity {
         campoLocal = findViewById(R.id.campo_local);
         campoValidade = findViewById(R.id.campo_validade);
 
-        long itemId = getIntent().getLongExtra(EXTRA_ITEM_ID, -1);
-        if (itemId != -1) {
-            itemEmEdicao = ItemRepository.getInstance().buscarPorId(itemId);
-            if (itemEmEdicao == null) {
-                finish();
-                return;
-            }
-        }
-        setTitle(itemEmEdicao == null ? R.string.titulo_novo_item : R.string.titulo_editar_item);
+        botaoSalvar = findViewById(R.id.botao_salvar);
+        botaoSalvar.setOnClickListener(v -> salvar());
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(ESTADO_VALIDADE)) {
-                dataValidade = LocalDate.ofEpochDay(savedInstanceState.getLong(ESTADO_VALIDADE));
-            }
-        } else if (itemEmEdicao != null) {
-            preencherCampos(itemEmEdicao);
+        if (savedInstanceState != null && savedInstanceState.containsKey(ESTADO_VALIDADE)) {
+            dataValidade = LocalDate.ofEpochDay(savedInstanceState.getLong(ESTADO_VALIDADE));
         }
         exibirValidade();
 
@@ -95,7 +86,28 @@ public class FormularioItemActivity extends AppCompatActivity {
         layoutValidade.setEndIconOnClickListener(v -> abrirSeletorData());
         reconectarSeletorData();
 
-        findViewById(R.id.botao_salvar).setOnClickListener(v -> salvar());
+        long itemId = getIntent().getLongExtra(EXTRA_ITEM_ID, -1);
+        if (itemId == -1) {
+            setTitle(R.string.titulo_novo_item);
+            return;
+        }
+        setTitle(R.string.titulo_editar_item);
+        botaoSalvar.setEnabled(false);
+        ItemRepository.getInstance(this).buscarPorId(itemId, item -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            if (item == null) {
+                finish();
+                return;
+            }
+            itemEmEdicao = item;
+            if (savedInstanceState == null) {
+                preencherCampos(item);
+                exibirValidade();
+            }
+            botaoSalvar.setEnabled(true);
+        });
     }
 
     @Override
@@ -196,20 +208,26 @@ public class FormularioItemActivity extends AppCompatActivity {
             return;
         }
 
-        ItemRepository repositorio = ItemRepository.getInstance();
+        botaoSalvar.setEnabled(false);
+        ItemRepository repositorio = ItemRepository.getInstance(this);
         if (itemEmEdicao == null) {
-            repositorio.inserir(new Item(nome, categoria, quantidade, local, dataValidade));
-            Toast.makeText(this, R.string.msg_item_cadastrado, Toast.LENGTH_SHORT).show();
+            repositorio.inserir(new Item(nome, categoria, quantidade, local, dataValidade), id -> {
+                Toast.makeText(getApplicationContext(), R.string.msg_item_cadastrado,
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            });
         } else {
             itemEmEdicao.setNome(nome);
             itemEmEdicao.setCategoria(categoria);
             itemEmEdicao.setQuantidade(quantidade);
             itemEmEdicao.setLocal(local);
             itemEmEdicao.setDataValidade(dataValidade);
-            repositorio.atualizar(itemEmEdicao);
-            Toast.makeText(this, R.string.msg_item_atualizado, Toast.LENGTH_SHORT).show();
+            repositorio.atualizar(itemEmEdicao, sucesso -> {
+                Toast.makeText(getApplicationContext(), R.string.msg_item_atualizado,
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            });
         }
-        finish();
     }
 
     private static String texto(TextInputEditText campo) {
