@@ -58,8 +58,33 @@ public final class ItemRepository {
         }, callback);
     }
 
-    public void listarHistorico(Callback<List<Item>> callback) {
-        executar(dao::listarHistorico, callback);
+    public void listarHistorico(SituacaoItem situacao, Callback<List<Item>> callback) {
+        executar(() -> dao.listarHistorico(situacao), callback);
+    }
+
+    public void existeDuplicado(String nome, String local, long idIgnorado,
+                                Callback<Boolean> callback) {
+        executar(() -> {
+            String termo = normalizar(nome);
+            for (Item item : dao.listarAtivosNoLocal(local, idIgnorado)) {
+                if (normalizar(item.getNome()).equals(termo)) {
+                    return true;
+                }
+            }
+            return false;
+        }, callback);
+    }
+
+    public void resumoBaixas(int dias, Callback<ResumoBaixas> callback) {
+        executar(() -> {
+            LocalDate desde = LocalDate.now().minusDays(dias);
+            return new ResumoBaixas(dao.contarBaixas(SituacaoItem.CONSUMIDO, desde),
+                    dao.contarBaixas(SituacaoItem.DESCARTADO, desde));
+        }, callback);
+    }
+
+    public void restaurar(long id, Callback<Boolean> callback) {
+        executar(() -> dao.restaurar(id) > 0, callback);
     }
 
     public void buscarPorId(long id, Callback<Item> callback) {

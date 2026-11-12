@@ -71,11 +71,16 @@ public class DetalheItemActivity extends AppCompatActivity {
         findViewById(R.id.botao_descartado).setOnClickListener(v ->
                 registrarBaixa(SituacaoItem.DESCARTADO, R.string.msg_item_descartado));
         findViewById(R.id.botao_excluir).setOnClickListener(v -> confirmarExclusao());
+        findViewById(R.id.botao_restaurar).setOnClickListener(v -> restaurar());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        carregar();
+    }
+
+    private void carregar() {
         ItemRepository.getInstance(this).buscarPorId(itemId, item -> {
             if (isFinishing() || isDestroyed()) {
                 return;
@@ -132,6 +137,18 @@ public class DetalheItemActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), mensagemRes, Toast.LENGTH_SHORT).show();
             }
             finish();
+        });
+    }
+
+    private void restaurar() {
+        ItemRepository.getInstance(this).restaurar(itemId, sucesso -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            if (sucesso) {
+                Toast.makeText(this, R.string.msg_item_restaurado, Toast.LENGTH_SHORT).show();
+            }
+            carregar();
         });
     }
 

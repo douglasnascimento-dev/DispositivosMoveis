@@ -3,20 +3,26 @@ package br.edu.utfpr.despensaalerta.ui.item;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import br.edu.utfpr.despensaalerta.R;
 import br.edu.utfpr.despensaalerta.data.ItemRepository;
@@ -27,11 +33,17 @@ public class FormularioItemActivity extends AppCompatActivity {
 
     private static final String EXTRA_ITEM_ID = "item_id";
     private static final String ESTADO_VALIDADE = "validade";
+    private static final String ESTADO_INICIAL = "estado_inicial";
     private static final String TAG_SELETOR_DATA = "seletor_validade";
+
+    private static final int NOME_MINIMO = 2;
+    private static final int QUANTIDADE_MINIMA = 1;
+    private static final int QUANTIDADE_MAXIMA = 999;
 
     private Item itemEmEdicao;
     private View botaoSalvar;
     private LocalDate dataValidade;
+    private String estadoInicial;
 
     private TextInputLayout layoutNome;
     private TextInputLayout layoutCategoria;
@@ -77,18 +89,39 @@ public class FormularioItemActivity extends AppCompatActivity {
         botaoSalvar = findViewById(R.id.botao_salvar);
         botaoSalvar.setOnClickListener(v -> salvar());
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(ESTADO_VALIDADE)) {
-            dataValidade = LocalDate.ofEpochDay(savedInstanceState.getLong(ESTADO_VALIDADE));
-        }
-        exibirValidade();
+        limparErroAoAlterar(campoNome, layoutNome);
+        limparErroAoAlterar(campoQuantidade, layoutQuantidade);
+        campoCategoria.setOnItemClickListener((parent, v, position, id) -> layoutCategoria.setError(null));
+        campoLocal.setOnItemClickListener((parent, v, position, id) -> layoutLocal.setError(null));
+        layoutQuantidade.setStartIconOnClickListener(v -> alterarQuantidade(-1));
+        layoutQuantidade.setEndIconOnClickListener(v -> alterarQuantidade(1));
 
         campoValidade.setOnClickListener(v -> abrirSeletorData());
         layoutValidade.setEndIconOnClickListener(v -> abrirSeletorData());
         reconectarSeletorData();
 
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                tentarSair();
+            }
+        });
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(ESTADO_VALIDADE)) {
+                dataValidade = LocalDate.ofEpochDay(savedInstanceState.getLong(ESTADO_VALIDADE));
+            }
+            estadoInicial = savedInstanceState.getString(ESTADO_INICIAL);
+        }
+        exibirValidade();
+
         long itemId = getIntent().getLongExtra(EXTRA_ITEM_ID, -1);
         if (itemId == -1) {
             setTitle(R.string.titulo_novo_item);
+            if (savedInstanceState == null) {
+                campoQuantidade.setText(String.valueOf(QUANTIDADE_MINIMA));
+                estadoInicial = resumoCampos();
+            }
             return;
         }
         setTitle(R.string.titulo_editar_item);
@@ -105,6 +138,7 @@ public class FormularioItemActivity extends AppCompatActivity {
             if (savedInstanceState == null) {
                 preencherCampos(item);
                 exibirValidade();
+                estadoInicial = resumoCampos();
             }
             botaoSalvar.setEnabled(true);
         });
@@ -116,12 +150,31 @@ public class FormularioItemActivity extends AppCompatActivity {
         if (dataValidade != null) {
             outState.putLong(ESTADO_VALIDADE, dataValidade.toEpochDay());
         }
+        outState.putString(ESTADO_INICIAL, estadoInicial);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        tentarSair();
         return true;
+    }
+
+    private void tentarSair() {
+        if (estadoInicial == null || estadoInicial.equals(resumoCampos())) {
+            finish();
+            return;
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialogo_sair_titulo)
+                .setMessage(R.string.dialogo_sair_mensagem)
+                .setNegativeButton(R.string.acao_continuar_editando, null)
+                .setPositiveButton(R.string.acao_descartar, (dialog, which) -> finish())
+                .show();
+    }
+
+    private String resumoCampos() {
+        return texto(campoNome) + "|" + campoCategoria.getText() + "|" + texto(campoQuantidade)
+                + "|" + campoLocal.getText() + "|" + dataValidade;
     }
 
     private void preencherCampos(Item item) {
@@ -130,6 +183,39 @@ public class FormularioItemActivity extends AppCompatActivity {
         campoQuantidade.setText(String.valueOf(item.getQuantidade()));
         campoLocal.setText(item.getLocal(), false);
         dataValidade = item.getDataValidade();
+    }
+
+    private void limparErroAoAlterar(EditText campo, TextInputLayout layout) {
+        campo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                layout.setError(null);
+            }
+        });
+    }
+
+    private void alterarQuantidade(int delta) {
+        int atual = lerQuantidade();
+        int nova = Math.max(QUANTIDADE_MINIMA, Math.min(QUANTIDADE_MAXIMA,
+                (atual < QUANTIDADE_MINIMA ? 0 : atual) + delta));
+        campoQuantidade.setText(String.valueOf(nova));
+        campoQuantidade.setSelection(campoQuantidade.length());
+    }
+
+    private int lerQuantidade() {
+        try {
+            return Integer.parseInt(texto(campoQuantidade));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private void exibirValidade() {
@@ -169,35 +255,36 @@ public class FormularioItemActivity extends AppCompatActivity {
     private void salvar() {
         String nome = texto(campoNome);
         String categoria = campoCategoria.getText().toString().trim();
-        String quantidadeTexto = texto(campoQuantidade);
         String local = campoLocal.getText().toString().trim();
-
-        layoutNome.setError(null);
-        layoutCategoria.setError(null);
-        layoutQuantidade.setError(null);
-        layoutLocal.setError(null);
-        layoutValidade.setError(null);
+        int quantidade = lerQuantidade();
 
         boolean valido = true;
-        if (TextUtils.isEmpty(nome)) {
+        if (nome.isEmpty()) {
             layoutNome.setError(getString(R.string.erro_campo_obrigatorio));
             valido = false;
+        } else if (nome.length() < NOME_MINIMO) {
+            layoutNome.setError(getString(R.string.erro_nome_curto));
+            valido = false;
         }
-        if (TextUtils.isEmpty(categoria)) {
+        if (categoria.isEmpty()) {
             layoutCategoria.setError(getString(R.string.erro_campo_obrigatorio));
             valido = false;
-        }
-        int quantidade = 0;
-        try {
-            quantidade = Integer.parseInt(quantidadeTexto);
-        } catch (NumberFormatException ignorada) {
-        }
-        if (quantidade < 1) {
-            layoutQuantidade.setError(getString(R.string.erro_quantidade));
+        } else if (!opcaoValida(R.array.categorias, categoria)) {
+            layoutCategoria.setError(getString(R.string.erro_categoria_invalida));
             valido = false;
         }
-        if (TextUtils.isEmpty(local)) {
+        if (quantidade < QUANTIDADE_MINIMA) {
+            layoutQuantidade.setError(getString(R.string.erro_quantidade));
+            valido = false;
+        } else if (quantidade > QUANTIDADE_MAXIMA) {
+            layoutQuantidade.setError(getString(R.string.erro_quantidade_maxima));
+            valido = false;
+        }
+        if (local.isEmpty()) {
             layoutLocal.setError(getString(R.string.erro_campo_obrigatorio));
+            valido = false;
+        } else if (!opcaoValida(R.array.locais, local)) {
+            layoutLocal.setError(getString(R.string.erro_local_invalido));
             valido = false;
         }
         if (dataValidade == null) {
@@ -208,20 +295,65 @@ public class FormularioItemActivity extends AppCompatActivity {
             return;
         }
 
+        Item dados = new Item(nome, categoria, quantidade, local, dataValidade);
+        confirmarValidade(dados);
+    }
+
+    private void confirmarValidade(Item dados) {
+        boolean dataAlterada = itemEmEdicao == null
+                || !dados.getDataValidade().equals(itemEmEdicao.getDataValidade());
+        if (dataAlterada && dados.getDataValidade().isBefore(LocalDate.now())) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.dialogo_vencido_titulo)
+                    .setMessage(R.string.dialogo_vencido_mensagem)
+                    .setNegativeButton(R.string.acao_cancelar, null)
+                    .setPositiveButton(R.string.acao_salvar_mesmo_assim,
+                            (dialog, which) -> confirmarDuplicado(dados))
+                    .show();
+        } else {
+            confirmarDuplicado(dados);
+        }
+    }
+
+    private void confirmarDuplicado(Item dados) {
+        botaoSalvar.setEnabled(false);
+        long idIgnorado = itemEmEdicao == null ? 0 : itemEmEdicao.getId();
+        ItemRepository.getInstance(this).existeDuplicado(dados.getNome(), dados.getLocal(),
+                idIgnorado, duplicado -> {
+                    if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
+                    if (!duplicado) {
+                        gravar(dados);
+                        return;
+                    }
+                    botaoSalvar.setEnabled(true);
+                    new MaterialAlertDialogBuilder(this)
+                            .setTitle(R.string.dialogo_duplicado_titulo)
+                            .setMessage(getString(R.string.dialogo_duplicado_mensagem,
+                                    dados.getNome(), dados.getLocal()))
+                            .setNegativeButton(R.string.acao_cancelar, null)
+                            .setPositiveButton(R.string.acao_salvar_mesmo_assim,
+                                    (dialog, which) -> gravar(dados))
+                            .show();
+                });
+    }
+
+    private void gravar(Item dados) {
         botaoSalvar.setEnabled(false);
         ItemRepository repositorio = ItemRepository.getInstance(this);
         if (itemEmEdicao == null) {
-            repositorio.inserir(new Item(nome, categoria, quantidade, local, dataValidade), id -> {
+            repositorio.inserir(dados, id -> {
                 Toast.makeText(getApplicationContext(), R.string.msg_item_cadastrado,
                         Toast.LENGTH_SHORT).show();
                 finish();
             });
         } else {
-            itemEmEdicao.setNome(nome);
-            itemEmEdicao.setCategoria(categoria);
-            itemEmEdicao.setQuantidade(quantidade);
-            itemEmEdicao.setLocal(local);
-            itemEmEdicao.setDataValidade(dataValidade);
+            itemEmEdicao.setNome(dados.getNome());
+            itemEmEdicao.setCategoria(dados.getCategoria());
+            itemEmEdicao.setQuantidade(dados.getQuantidade());
+            itemEmEdicao.setLocal(dados.getLocal());
+            itemEmEdicao.setDataValidade(dados.getDataValidade());
             repositorio.atualizar(itemEmEdicao, sucesso -> {
                 Toast.makeText(getApplicationContext(), R.string.msg_item_atualizado,
                         Toast.LENGTH_SHORT).show();
@@ -230,7 +362,12 @@ public class FormularioItemActivity extends AppCompatActivity {
         }
     }
 
-    private static String texto(TextInputEditText campo) {
+    private boolean opcaoValida(int arrayRes, String valor) {
+        List<String> opcoes = Arrays.asList(getResources().getStringArray(arrayRes));
+        return opcoes.contains(valor);
+    }
+
+    private static String texto(EditText campo) {
         return campo.getText() == null ? "" : campo.getText().toString().trim();
     }
 }

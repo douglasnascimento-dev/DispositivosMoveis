@@ -24,8 +24,16 @@ public interface ItemDao {
             + "ORDER BY dataValidade, nome")
     List<Item> filtrar(String categoria, String local, long inicio, long fim);
 
-    @Query("SELECT * FROM itens WHERE situacao != 'ATIVO' ORDER BY dataBaixa DESC, id DESC")
-    List<Item> listarHistorico();
+    @Query("SELECT * FROM itens WHERE situacao != 'ATIVO' "
+            + "AND (:situacao IS NULL OR situacao = :situacao) "
+            + "ORDER BY dataBaixa DESC, id DESC")
+    List<Item> listarHistorico(SituacaoItem situacao);
+
+    @Query("SELECT * FROM itens WHERE situacao = 'ATIVO' AND local = :local AND id != :idIgnorado")
+    List<Item> listarAtivosNoLocal(String local, long idIgnorado);
+
+    @Query("SELECT COUNT(*) FROM itens WHERE situacao = :situacao AND dataBaixa >= :desde")
+    int contarBaixas(SituacaoItem situacao, LocalDate desde);
 
     @Query("SELECT * FROM itens WHERE id = :id")
     Item buscarPorId(long id);
@@ -42,4 +50,8 @@ public interface ItemDao {
     @Query("UPDATE itens SET situacao = :situacao, dataBaixa = :data "
             + "WHERE id = :id AND situacao = 'ATIVO'")
     int registrarBaixa(long id, SituacaoItem situacao, LocalDate data);
+
+    @Query("UPDATE itens SET situacao = 'ATIVO', dataBaixa = NULL "
+            + "WHERE id = :id AND situacao != 'ATIVO'")
+    int restaurar(long id);
 }

@@ -135,6 +135,14 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?attr/textAppearanceBodyLarge"
                             tools:text="Consumido em 20/09/2026" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/botao_restaurar"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/acao_restaurar" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -11,12 +11,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.utfpr.despensaalerta.MainActivity;
 import br.edu.utfpr.despensaalerta.R;
 import br.edu.utfpr.despensaalerta.data.ItemRepository;
+import br.edu.utfpr.despensaalerta.data.ResumoBaixas;
 import br.edu.utfpr.despensaalerta.model.Item;
 import br.edu.utfpr.despensaalerta.model.StatusValidade;
 import br.edu.utfpr.despensaalerta.ui.adapter.ItemAdapter;
@@ -29,6 +32,9 @@ public class PainelFragment extends Fragment {
     private TextView textTotalVencendo;
     private TextView textTotalOk;
     private TextView textVazio;
+    private TextView textPercentualAproveitado;
+    private TextView textDetalheAproveitamento;
+    private LinearProgressIndicator progressoAproveitamento;
     private ItemAdapter adapter;
 
     @Nullable
@@ -45,6 +51,9 @@ public class PainelFragment extends Fragment {
         textTotalVencendo = view.findViewById(R.id.text_total_vencendo);
         textTotalOk = view.findViewById(R.id.text_total_ok);
         textVazio = view.findViewById(R.id.text_vazio);
+        textPercentualAproveitado = view.findViewById(R.id.text_percentual_aproveitado);
+        textDetalheAproveitamento = view.findViewById(R.id.text_detalhe_aproveitamento);
+        progressoAproveitamento = view.findViewById(R.id.progresso_aproveitamento);
 
         adapter = new ItemAdapter(false, item ->
                 startActivity(DetalheItemActivity.abrir(requireContext(), item.getId())));
@@ -70,7 +79,28 @@ public class PainelFragment extends Fragment {
     }
 
     private void atualizar() {
-        ItemRepository.getInstance(requireContext()).listarAtivos(this::exibir);
+        ItemRepository repositorio = ItemRepository.getInstance(requireContext());
+        repositorio.listarAtivos(this::exibir);
+        repositorio.resumoBaixas(30, this::exibirAproveitamento);
+    }
+
+    private void exibirAproveitamento(ResumoBaixas resumo) {
+        if (getView() == null) {
+            return;
+        }
+        if (resumo.getTotal() == 0) {
+            textPercentualAproveitado.setVisibility(View.GONE);
+            progressoAproveitamento.setVisibility(View.GONE);
+            textDetalheAproveitamento.setText(R.string.painel_aproveitamento_vazio);
+            return;
+        }
+        textPercentualAproveitado.setVisibility(View.VISIBLE);
+        progressoAproveitamento.setVisibility(View.VISIBLE);
+        textPercentualAproveitado.setText(getString(R.string.painel_aproveitamento_percentual,
+                resumo.getPercentualAproveitado()));
+        progressoAproveitamento.setProgress(resumo.getPercentualAproveitado());
+        textDetalheAproveitamento.setText(getString(R.string.painel_aproveitamento_detalhe,
+                resumo.getConsumidos(), resumo.getDescartados()));
     }
 
     private void exibir(List<Item> ativos) {

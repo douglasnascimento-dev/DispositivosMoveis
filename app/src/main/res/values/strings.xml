@@ -84,4 +84,31 @@
         <item quantity="one">Venceu há %d dia</item>
         <item quantity="other">Venceu há %d dias</item>
     </plurals>
+    <string name="painel_aproveitamento_titulo">Últimos 30 dias</string>
+    <string name="painel_aproveitamento_vazio">Nenhum item consumido ou descartado nos últimos 30 dias.</string>
+    <string name="painel_aproveitamento_detalhe">%1$d consumidos · %2$d descartados</string>
+    <string name="painel_aproveitamento_percentual">%1$d%% aproveitado</string>
+
+    <string name="filtro_consumidos">Consumidos</string>
+    <string name="filtro_descartados">Descartados</string>
+
+    <string name="acao_restaurar">Restaurar item</string>
+    <string name="msg_item_restaurado">Item restaurado para a despensa</string>
+    <string name="acao_diminuir">Diminuir quantidade</string>
+    <string name="acao_aumentar">Aumentar quantidade</string>
+    <string name="acao_salvar_mesmo_assim">Salvar mesmo assim</string>
+    <string name="acao_descartar">Descartar</string>
+    <string name="acao_continuar_editando">Continuar editando</string>
+
+    <string name="erro_nome_curto">O nome precisa ter pelo menos 2 caracteres</string>
+    <string name="erro_quantidade_maxima">A quantidade máxima é 999</string>
+    <string name="erro_categoria_invalida">Escolha uma categoria da lista</string>
+    <string name="erro_local_invalido">Escolha um local da lista</string>
+
+    <string name="dialogo_vencido_titulo">Item já vencido</string>
+    <string name="dialogo_vencido_mensagem">A data de validade é anterior a hoje. Deseja salvar o item mesmo assim?</string>
+    <string name="dialogo_duplicado_titulo">Item repetido</string>
+    <string name="dialogo_duplicado_mensagem">Já existe \"%1$s\" disponível em %2$s. Deseja salvar mesmo assim?</string>
+    <string name="dialogo_sair_titulo">Descartar alterações?</string>
+    <string name="dialogo_sair_mensagem">As informações preenchidas não foram salvas.</string>
 </resources>

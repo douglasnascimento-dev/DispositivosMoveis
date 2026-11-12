@@ -1,21 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_historico"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:clipToPadding="false"
-        android:padding="12dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_produto" />
+        android:paddingHorizontal="16dp"
+        android:scrollbars="none">
 
-    <TextView
-        android:id="@+id/text_vazio"
-        style="@style/Widget.DespensaAlerta.EstadoVazio"
-        android:text="@string/historico_vazio" />
-</FrameLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chips_situacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:checkedChip="@id/chip_situacao_todos"
+            app:chipSpacingHorizontal="8dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_situacao_todos"
+                style="@style/Widget.DespensaAlerta.Chip.Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filtro_todos" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_situacao_consumidos"
+                style="@style/Widget.DespensaAlerta.Chip.Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filtro_consumidos" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_situacao_descartados"
+                style="@style/Widget.DespensaAlerta.Chip.Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filtro_descartados" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_historico"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_produto" />
+
+        <TextView
+            android:id="@+id/text_vazio"
+            style="@style/Widget.DespensaAlerta.EstadoVazio"
+            android:text="@string/historico_vazio" />
+    </FrameLayout>
+</LinearLayout>
